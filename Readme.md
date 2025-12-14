@@ -16,7 +16,8 @@ It uses Python to parse HR data (CSV) and provisions users securely into an Auth
 * [x] Generates standardized metadata (Department, Job Title).
 
 ## 📸 Proof of Concept
-*(You can upload a screenshot of your Auth0 user list here later)*
+<img width="1159" height="558" alt="Screenshot 2025-12-14 at 10 15 40 PM" src="https://github.com/user-attachments/assets/cad739a0-ad89-4ee6-897f-7538888fa68e" />
+
 
 ## 📦 How to Run
 1. Clone the repo.
