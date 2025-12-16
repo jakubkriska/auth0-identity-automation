@@ -20,9 +20,6 @@ It uses Python to parse HR data (CSV) and provisions users securely into an Auth
 <img width="600" height="567" alt="Screenshot 2025-12-14 at 10 26 12 PM" src="https://github.com/user-attachments/assets/fabce2da-406a-4e93-96be-6e62d12a938c" />
 <img width="600" height="88" alt="image" src="https://github.com/user-attachments/assets/2575bc11-a0a3-47f9-a5da-f97582ed34fc" />
 
-
-
-
 ## 📦 How to Run
 1. Clone the repo.
 2. Install dependencies: `pip install -r requirements.txt`
