@@ -19,7 +19,8 @@ It uses Python to parse HR data (CSV) and provisions users securely into an Auth
 
 ### Step 1: The Clean State
 
-*The Auth0 User Directory starts empty (except for the admin).*
+*The Auth0 User Directory starts completely empty, ready for the automation script to run.*
+
 <img width="600" height="559" alt="Screenshot 2025-12-16 at 3 00 53 PM" src="https://github.com/user-attachments/assets/b12f9386-05de-4100-a1a9-f2dce21676b4" />
 
 ### Step 2: Running the Automation Engine
