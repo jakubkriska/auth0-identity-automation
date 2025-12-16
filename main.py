@@ -1,42 +1,34 @@
 import csv
 import os
+import time
+import warnings
 from dotenv import load_dotenv
 from auth0.authentication import GetToken
 from auth0.management import Auth0
 
-# 1. Load environment variables from the .env file
+# 1. Configuration & Setup
 load_dotenv()
+warnings.filterwarnings("ignore", category=UserWarning) # Silence SSL warnings
 
-# 2. Securely fetch configuration
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
 CLIENT_ID = os.getenv('AUTH0_CLIENT_ID')
 CLIENT_SECRET = os.getenv('AUTH0_CLIENT_SECRET')
 
-def run_onboarding():
-    print("\n--- Starting Identity Onboarding Engine ---")
-
-    # Check if keys are loaded correctly
-    if not all([AUTH0_DOMAIN, CLIENT_ID, CLIENT_SECRET]):
-        print(" [ERROR] Missing configuration. Please check your .env file.")
-        return
-
-    # 3. Authenticate against Auth0 (Machine-to-Machine)
-    print("1. Connecting to Auth0...")
+def get_auth0_client():
+    """Helper function to handle authentication once."""
     try:
-        # Request an access token
         get_token = GetToken(AUTH0_DOMAIN, CLIENT_ID, client_secret=CLIENT_SECRET)
         token = get_token.client_credentials(audience=f'https://{AUTH0_DOMAIN}/api/v2/')
         mgmt_api_token = token['access_token']
-        
-        # Initialize the Management API client
-        auth0 = Auth0(AUTH0_DOMAIN, mgmt_api_token)
-        print("   [OK] Connection established.")
+        return Auth0(AUTH0_DOMAIN, mgmt_api_token)
     except Exception as e:
-        print(f"   [ERROR] Failed to connect. Check your credentials. Details: {e}")
-        return
+        print(f" [CRITICAL] Login failed: {e}")
+        return None
 
-    # 4. Process the CSV file
-    print("2. Processing CSV data...")
+def run_onboarding(auth0):
+    """Reads CSV and creates users."""
+    print("\n--- Phase 1: Onboarding Users ---")
+    
     try:
         with open('new_hires.csv', mode='r', encoding='utf-8') as csv_file:
             csv_reader = csv.DictReader(csv_file)
@@ -44,21 +36,15 @@ def run_onboarding():
             for row in csv_reader:
                 first_name = row['FirstName']
                 last_name = row['LastName']
-                
-                # Generate a work email
-                email = f"{first_name}.{last_name}@revai-demo.com".lower()
-                
-                # In production, use a random password generator. 
-                # For this demo, we use a static initial password.
+                email = f"{first_name}.{last_name}@revai-test.com".lower()
                 password = "Welcome123!ChangeMe" 
 
-                print(f" -> Processing: {first_name} {last_name} ({email})")
+                print(f" -> Processing: {first_name} {last_name}...")
 
-                # Construct the User Object for Auth0
                 user_data = {
                     "email": email,
                     "password": password,
-                    "connection": "Username-Password-Authentication", # Default DB connection
+                    "connection": "Username-Password-Authentication",
                     "user_metadata": {
                         "department": row['Department'],
                         "title": row['JobTitle']
@@ -66,21 +52,54 @@ def run_onboarding():
                     "email_verified": False
                 }
 
-                # Send request to the API
                 try:
                     auth0.users.create(user_data)
-                    print(f"    [SUCCESS] User created in cloud directory.")
+                    print(f"    [SUCCESS] Created.")
                 except Exception as api_error:
-                    # Handle duplicate users gracefully
                     if "The user already exists" in str(api_error):
-                        print(f"    [SKIP] User already exists.")
+                        print(f"    [SKIP] Already exists.")
                     else:
-                        print(f"    [ERROR] API request failed: {api_error}")
-                        
+                        print(f"    [ERROR] {api_error}")
     except FileNotFoundError:
-        print("   [ERROR] File 'new_hires.csv' not found. Is it in the correct folder?")
-    except KeyError as e:
-        print(f"   [ERROR] CSV Header missing: {e}. Check your CSV column names.")
+        print("   [ERROR] 'new_hires.csv' not found.")
+
+def run_verification(auth0):
+    """Fetches users from cloud to verify data."""
+    print("\n--- Phase 2: Verification (Live Data) ---")
+    # Small pause to ensure the cloud index has updated (Eventual Consistency)
+    time.sleep(1) 
+
+    print(f"{'NAME':<20} | {'EMAIL':<30} | {'DEPT':<15} | {'TITLE'}")
+    print("-" * 85)
+
+    try:
+        # Get all users (no filter)
+        users = auth0.users.list(per_page=10)
+        
+        for user in users['users']:
+            name = user.get('name', 'N/A')
+            email = user.get('email', 'N/A')
+            metadata = user.get('user_metadata', {})
+            dept = metadata.get('department', '-')
+            title = metadata.get('title', '-')
+            
+            print(f"{name:<20} | {email:<30} | {dept:<15} | {title}")
+            
+    except Exception as e:
+        print(f" [ERROR] Could not fetch users: {e}")
 
 if __name__ == '__main__':
-    run_onboarding()
+    # Main Orchestrator
+    print("Initializing Identity Engine...")
+    
+    # 1. Connect Once
+    client = get_auth0_client()
+    
+    if client:
+        # 2. Run Onboarding
+        run_onboarding(client)
+        
+        # 3. Run Verification
+        run_verification(client)
+        
+    print("\n--- Pipeline Complete ---")
