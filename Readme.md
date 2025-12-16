@@ -16,8 +16,22 @@ It uses Python to parse HR data (CSV) and provisions users securely into an Auth
 * [x] Generates standardized metadata (Department, Job Title).
 
 ## 📸 Proof of Concept
+
+### Step 1: The Clean State
+
+*The Auth0 User Directory starts empty (except for the admin).*
 <img width="600" height="559" alt="Screenshot 2025-12-16 at 3 00 53 PM" src="https://github.com/user-attachments/assets/b12f9386-05de-4100-a1a9-f2dce21676b4" />
+
+### Step 2: Running the Automation Engine
+
+*The Python script parses the CSV, authenticates via API, creates the users, and verifies them in real-time.*
+
 <img width="600" height="263" alt="Screenshot 2025-12-16 at 3 00 27 PM" src="https://github.com/user-attachments/assets/f1cf4f66-bdaa-43bd-994d-266788b26426" />
+
+### Step 3: Success
+
+*The Auth0 Dashboard is now populated with the new users and their correct attributes.*
+
 <img width="600" height="562" alt="Screenshot 2025-12-16 at 3 01 08 PM" src="https://github.com/user-attachments/assets/45d988e1-b8f8-4717-ac38-8d8699f8229d" />
 
 
