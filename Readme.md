@@ -16,9 +16,9 @@ It uses Python to parse HR data (CSV) and provisions users securely into an Auth
 * [x] Generates standardized metadata (Department, Job Title).
 
 ## 📸 Proof of Concept
-<img width="600" height="567" alt="Screenshot 2025-12-14 at 10 26 12 PM" src="https://github.com/user-attachments/assets/fabce2da-406a-4e93-96be-6e62d12a938c" />
-<img width="600" height="300" alt="Screenshot 2025-12-14 at 10 15 40 PM" src="https://github.com/user-attachments/assets/cad739a0-ad89-4ee6-897f-7538888fa68e" />
-<img width="600" height="466" alt="image" src="https://github.com/user-attachments/assets/e2facbf5-eb07-4574-a554-afec42cead40" />
+<img width="1140" height="562" alt="Screenshot 2025-12-16 at 3 01 08 PM" src="https://github.com/user-attachments/assets/45d988e1-b8f8-4717-ac38-8d8699f8229d" />
+
+
 
 ## 📦 How to Run
 1. Clone the repo.
