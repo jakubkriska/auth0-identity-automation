@@ -2,13 +2,15 @@ import csv
 import os
 import time
 import warnings
+
+warnings.filterwarnings("ignore")
+
 from dotenv import load_dotenv
 from auth0.authentication import GetToken
 from auth0.management import Auth0
 
 # 1. Configuration & Setup
 load_dotenv()
-warnings.filterwarnings("ignore", category=UserWarning) # Silence SSL warnings
 
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
 CLIENT_ID = os.getenv('AUTH0_CLIENT_ID')
@@ -67,7 +69,7 @@ def run_verification(auth0):
     """Fetches users from cloud to verify data."""
     print("\n--- Phase 2: Verification (Live Data) ---")
     # Small pause to ensure the cloud index has updated (Eventual Consistency)
-    time.sleep(1) 
+    time.sleep(5) 
 
     print(f"{'NAME':<20} | {'EMAIL':<30} | {'DEPT':<15} | {'TITLE'}")
     print("-" * 85)
